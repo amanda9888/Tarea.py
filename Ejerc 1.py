@@ -1,3 +1,6 @@
+checkout main
+git checkout -b ejercicio1
+git push origin ejercicio1
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
