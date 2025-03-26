@@ -1,3 +1,8 @@
+checkout main
+git checkout -b ejercicio2
+git push origin ejercicio2
+
+
 tp, tn, fp, fn = 40, 30, 20, 10
 
 accuracy = (tp + tn) / (tp + tn + fp + fn)  # 0.7
