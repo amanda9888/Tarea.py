@@ -1,0 +1,117 @@
+# Carga y Exploración de Datos
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Cargar el dataset
+df = pd.read_csv('winequality-red.csv')
+
+# Mostrar las primeras filas
+print("Primeras filas del dataset:")
+print(df.head())
+
+# Estadísticas descriptivas
+print("\nEstadísticas descriptivas:")
+print(df.describe())
+
+# Distribución de la variable objetivo (calidad)
+plt.figure(figsize=(8, 4))
+sns.countplot(x='quality', data=df, palette='Reds')
+plt.title('Distribución de la Calidad del Vino')
+plt.xlabel('Calidad')
+plt.ylabel('Cantidad de Vinos')
+plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Cargar el dataset
+df = pd.read_csv('winequality-red.csv')
+
+# Mostrar las primeras filas
+print("Primeras filas del dataset:")
+print(df.head())
+
+# Estadísticas descriptivas
+print("\nEstadísticas descriptivas:")
+print(df.describe())
+
+# Distribución de la variable objetivo (calidad)
+plt.figure(figsize=(8, 4))
+sns.countplot(x='quality', data=df, palette='Reds')
+plt.title('Distribución de la Calidad del Vino')
+plt.xlabel('Calidad')
+plt.ylabel('Cantidad de Vinos')
+plt.show()
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Separar características (X) y variable objetivo (y)
+X = df.drop('quality', axis=1)
+y = df['quality']
+
+# Dividir en conjuntos de entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Estandarizar las características
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, classification_report
+
+# Entrenar modelo de Árbol de Decisión
+tree_model = DecisionTreeClassifier(random_state=42)
+tree_model.fit(X_train_scaled, y_train)
+
+# Predicciones y evaluación
+y_pred_tree = tree_model.predict(X_test_scaled)
+print("Precisión del Árbol de Decisión:", accuracy_score(y_test, y_pred_tree))
+print("\nReporte de Clasificación:\n", classification_report(y_test, y_pred_tree))
+
+# Visualización del árbol
+plt.figure(figsize=(20, 10))
+plot_tree(tree_model, feature_names=X.columns, class_names=[str(i) for i in sorted(y.unique())],
+          filled=True, fontsize=10)
+plt.title("Árbol de Decisión")
+plt.show()
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+# Entrenar modelo de Random Forest
+rf_model = RandomForestClassifier(random_state=42)
+rf_model.fit(X_train_scaled, y_train)
+
+# Evaluación del modelo
+y_pred_rf = rf_model.predict(X_test_scaled)
+print("Precisión del Random Forest:", accuracy_score(y_test, y_pred_rf))
+print("\nReporte de Clasificación:\n", classification_report(y_test, y_pred_rf))
+
+# Ajuste de hiperparámetros con GridSearchCV
+param_grid = {
+    'n_estimators': [100, 200],
+    'max_depth': [None, 10, 20],
+    'min_samples_split': [2, 5],
+}
+grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=3, n_jobs=-1)
+grid_search.fit(X_train_scaled, y_train)
+
+# Evaluación del mejor modelo
+best_rf = grid_search.best_estimator_
+y_pred_best_rf = best_rf.predict(X_test_scaled)
+print("Precisión del Mejor Random Forest:", accuracy_score(y_test, y_pred_best_rf))
+import numpy as np
+
+# Extraer importancias del modelo ajustado
+importances = best_rf.feature_importances_
+indices = np.argsort(importances)[::-1]
+
+# Visualizar las características más importantes
+plt.figure(figsize=(10, 6))
+sns.barplot(x=importances[indices], y=X.columns[indices], palette='Reds_r')
+plt.title("Importancia de las Características - Random Forest")
+plt.xlabel("Importancia")
+plt.ylabel("Características")
+plt.tight_layout()
+plt.show()
